@@ -1,0 +1,30 @@
+{
+  "name": "instantshare",
+  "version": "0.0.1",
+  "description": "GitHub Gist-like text & file sharing platform",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src -d dist",
+    "dev": "NODE_ENV=development nodemon --exec babel-node src/index.js"
+  },
+  "author": "Jackson Ming Hu <huming2207@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.4",
+    "mongoose-history": "^0.8.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/preset-env": "^7.2.3",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0"
+  }
+}
