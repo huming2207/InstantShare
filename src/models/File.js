@@ -4,4 +4,4 @@ const schema = new Schema({
     owner: { type: 'ObjectId', ref: 'User' }
 });
 
-export default model('File', schema);
+export default model('file', schema);

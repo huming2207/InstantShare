@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "babel src -d dist",
-    "dev": "NODE_ENV=development nodemon --exec babel-node src/index.js"
+    "dev": "NODE_ENV=development nodemon --nolazy --inspect-brk=9229 --exec babel-node src/index.js"
   },
   "author": "Jackson Ming Hu <huming2207@gmail.com>",
   "license": "ISC",

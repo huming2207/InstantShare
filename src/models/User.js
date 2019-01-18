@@ -8,4 +8,4 @@ const schema = new Schema({
 
 schema.plugin(require('mongoose-bcrypt'));
 
-export default model('User', schema);
+export default model('user', schema);
