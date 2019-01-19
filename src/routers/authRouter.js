@@ -1,8 +1,9 @@
 import { Router } from 'express'
 import User from '../models/User'
-import jwt from 'jsonwebtoken'
+import UserHelper from '../helpers/userHelper';
 
 const router = Router();
+const userHelper = new UserHelper();
 
 router.post('/register', (req, res) => {
     User.create({
@@ -12,7 +13,7 @@ router.post('/register', (req, res) => {
     }, (err, user) => {
         if(err) return res.status(500).json({ auth: false, token: null, error: [ "Failed to register user, internal server error" ] });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 3600 });
+        const token = userHelper.signUser(user._id);
         return res.status(200).send({ auth: true, token: token, error: [] });
     });
 });
@@ -20,14 +21,13 @@ router.post('/register', (req, res) => {
 router.get('/me', (req, res) => {
     const token = req.headers['x-access-token'];
     if (!token) return res.status(401).json({ auth: false, error: [ 'No token provided.' ], user: null});
-    
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(500).json({ auth: false, error: [ 'Failed to authenticate token.' ], user: null });     
-        }
-      
+
+    try {
+        const decoded = userHelper.verifyUser(token);
         res.status(200).json({ auth: true, error: [], user: decoded });
-    });
+    } catch(error) {
+        return res.status(500).json({ auth: false, error: [ 'Failed to authenticate token.' ], user: null }); 
+    }
 });
 
 router.post('/login', (req, res) => {
@@ -51,7 +51,7 @@ router.post('/login', (req, res) => {
             }
 
             if(same) {
-                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 3600 });
+                const token = userHelper.signUser(user._id);
                 return res.status(200).json({ auth: true, error: [], token: token });
             } else {
                 return res.status(401).json({ auth: false, error: [ "Username/Password incorrect!" ], token: null});
