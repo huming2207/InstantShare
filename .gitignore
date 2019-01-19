@@ -79,6 +79,9 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+# Babel output
+dist/
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -129,7 +132,8 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
