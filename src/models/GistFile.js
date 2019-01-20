@@ -7,7 +7,8 @@ const schema = new Schema({
     mimeType: { type: String },
     hash: { type: String },
     fileName: { type: String },
-    private: { type: Boolean }
+    private: { type: Boolean },
+    length: { type: Number }
 });
 
 export default model('gistfile', schema);
