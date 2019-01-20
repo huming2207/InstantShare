@@ -1,16 +1,13 @@
 import jsonwt from 'jsonwebtoken'
 
-export default class UserHelper {
-
-    static instance;
-  
+class UserHelper {
     constructor(){
-        if(instance){
-            return instance;
+        if(!UserHelper.instance) {
+            this.jwt = jsonwt;
+            this.instance = this;
         }
 
-        this.jwt = jsonwt;
-        this.instance = this;
+        return UserHelper.instance;
     }
     
     verifyUser(token) {
@@ -20,5 +17,9 @@ export default class UserHelper {
     signUser(userId) {
         return this.jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: 3600 });
     }
-
 }
+
+const instance = new UserHelper();
+Object.freeze(instance);
+
+export default instance;
