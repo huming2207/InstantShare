@@ -3,7 +3,7 @@ import User from '../models/User'
 import UserHelper from '../helpers/userHelper';
 
 const router = Router();
-const userHelper = new UserHelper();
+const userHelper = UserHelper;
 
 router.post('/register', (req, res) => {
     User.create({
@@ -11,8 +11,7 @@ router.post('/register', (req, res) => {
         password: req.body.password,
         nickName: req.body.nickName
     }, (err, user) => {
-        if(err) return res.status(500).json({ auth: false, token: null, error: [ "Failed to register user, internal server error" ] });
-
+        if(err) return res.status(500).json({ auth: false, token: null, error: [ "Failed to register user, internal server error", err ] });
         const token = userHelper.signUser(user._id);
         return res.status(200).send({ auth: true, token: token, error: [] });
     });
