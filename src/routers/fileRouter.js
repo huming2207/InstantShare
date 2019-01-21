@@ -1,31 +1,26 @@
 import { Router } from 'express'
-import mongoose from 'mongoose'
 import GistFile from '../models/GistFile';
-import UserHelper from '../helpers/userHelper';
+import { getUserToken } from '../helpers/userHelper'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: __dirname + '/../../.env' });
 
 const router = Router();
-const userHelper = UserHelper;
-const uploadDir = process.env.UPLOAD_BASE_PATH + '/'
+const uploadDir = process.env.UPLOAD_BASE_PATH + '/';
 
 router.post('/upload', (req, res) => {
-    const token = req.headers['x-access-token'];
-    let ownerId = "";
-    if (!token) return res.status(401).json({ error: [ 'No token provided.' ], hash: null, id: null });
-
-    try {
-        ownerId = userHelper.verifyUser(token).id;
-    } catch(error) {
-        return res.status(500).json({ error: [ 'Failed to authenticate token.' ], hash: null, id: null  }); 
-    }
+    const userResult = getUserToken(req);
+    if(!userResult.passed) return res.status(userResult.statusCode).json({ success: false, message: userResult.message });
 
     if (Object.keys(req.files).length == 0) {
         return res.status(400).json({ error: [ 'No file uploaded!' ], hash: null, id: null });
     }
 
+    console.log(req.files);
     let uploadedFile = req.files.file;
     const fileHash = uploadedFile.md5();
     GistFile.create({
-        owner: mongoose.Types.ObjectId(ownerId),
+        owner: userResult.decodedUser._id,
         createdTime: new Date(), 
         hash: fileHash,
         fileName: uploadedFile.name,
@@ -36,20 +31,23 @@ router.post('/upload', (req, res) => {
 
         // When file document in the DB is created, go on moving the file to the storage space
         uploadedFile.mv(uploadDir + file._id, (err) => {
-            if (err) return res.status(500).json({ error: [ 'Server cannot process the file', err ], hash: null, len: -1 }); 
-            res.status(200).json({ error: [], hash: fileHash, len: uploadedFile.data.length });
+            if (err) return res.status(500).json({ success: false, message: err, hash: null, len: -1 }); 
+            res.status(200).json({ success: true, message: err, hash: fileHash, len: uploadedFile.data.length });
         }); 
     });
 });
 
-router.get('/get/:fileId', (req, res) => {
-    const fileId = req.params.fileId;
-    const isDown = typeof(req.query.dl) !== undefined
-    GistFile.findById(fileId, (err, file) => {
+router.get('/f/:hash', (req, res) => {
+    const hash = req.params.hash;
+    const isDown = (typeof(req.query.dl) !== undefined);
+
+    if(!hash) return res.status(404).type('text/plain').send('Not found');
+
+    GistFile.findOne({ hash: hash }, (err, file) => {
         if(isDown) {
-            res.type(file.mimeType).download(uploadDir + file._id, file.fileName);
+            res.download(uploadDir + file._id, file.fileName);
         } else {
-            res.type(file.mimeType).sendFile(uploadDir + file._id);
+            res.sendFile(uploadDir + file._id);
         }
     });
 });
