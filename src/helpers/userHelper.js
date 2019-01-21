@@ -1,25 +1,22 @@
-import jsonwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
-class UserHelper {
-    constructor(){
-        if(!UserHelper.instance) {
-            this.jwt = jsonwt;
-            this.instance = this;
-        }
-
-        return UserHelper.instance;
-    }
-    
-    verifyUser(token) {
-        return this.jwt.verify(token, process.env.JWT_SECRET);
-    }
-
-    signUser(userId) {
-        return this.jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: 3600 });
-    }
+export function verifyUser(token) {
+    return jwt.verify(token, process.env.JWT_SECRET);
 }
 
-const instance = new UserHelper();
-Object.freeze(instance);
+export function signUser(user) {
+    return jwt.sign({ email: user.email, nickName: user.nickName, id: user._id }, process.env.JWT_SECRET)
+}
 
-export default instance;
+export function getUserToken(req) {
+    const header = req.header('Authorization');
+    if(!header) return { passed: false, decodedUser: null, message: "No header found!", statusCode: 400 };
+
+    const token = header.split(' ');
+    if(!token || !token.length || token.length < 2) 
+        return { passed: false, decodedUser: null, message: "Header format is incorrect!", statusCode: 422 };
+
+    const user = verifyUser(token[1]);
+    if(!user || !user.id) return { passed: false, decodedUser: null, message: "Failed to auth user!", statusCode: 401 };
+    return { passed: true, decodedUser: user, message: "User is valid", statusCode: 200 };
+}
