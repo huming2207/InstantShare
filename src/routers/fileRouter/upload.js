@@ -15,7 +15,7 @@ router.post('/upload', (req, res) => {
     if (Object.keys(req.files).length == 0) {
         return res.status(400).json({ success: false, message: 'No file specified!', hash: null, id: null });
     }
-    
+
     let uploadedFile = req.files.file;
     const fileHash = uploadedFile.md5();
     GistFile.create({
@@ -28,9 +28,12 @@ router.post('/upload', (req, res) => {
         length: uploadedFile.data.length
     }, (err, file) => {
 
+        // If upload fails, return 500
+        if(err || !file) return res.status(500).json({ success: false, message: 'Failed to create database record!', error: err, hash: null, id: null }); 
+
         // When file document in the DB is created, go on moving the file to the storage space
         uploadedFile.mv(uploadDir + file._id, (err) => {
-            if (err) return res.status(500).json({ success: false, message: err, hash: null, id: null }); 
+            if(err) return res.status(500).json({ success: false, message: 'Failed to store the file', error: err, hash: null, id: null }); 
             res.status(200).json({ success: true, message: 'File uploaded!', hash: fileHash, id: file._id });
         }); 
     });

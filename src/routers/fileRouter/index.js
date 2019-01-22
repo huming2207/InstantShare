@@ -1,13 +1,13 @@
 import { Router } from 'express'
-import download from './download'
-import upload from './upload'
+import downloadRouter from './download'
+import uploadRouter from './upload'
 
 const router = Router();
 
 // The download router
-router.use('/', download);
+router.use('/', downloadRouter);
 
 // The upload router
-router.use('/', upload);
+router.use('/', uploadRouter);
 
 export default router;

@@ -9,7 +9,7 @@ router.post('/login', [ check('email').isEmail(), check('password').isLength({ m
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({ success: false, errors: errors.array(), message: 'Username/password is malformed', token: null });
+        return res.status(422).json({ success: false, error: errors.array(), message: 'Username/password is malformed', token: null });
     }
 
     User.findOne({ email: req.body.email }, (err, user) => {
