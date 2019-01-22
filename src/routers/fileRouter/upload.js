@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import GistFile from '../../models/GistFile';
-import { getUserToken } from '../helpers/userHelper'
+import { getUserToken } from '../../helpers/userHelper'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: __dirname + '/../../../.env' });

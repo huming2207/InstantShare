@@ -1,17 +1,17 @@
 import { Router } from 'express'
-import loginRouter from './login'
-import portalRouter from './portal'
-import registerRouter from './register'
+import login from './login'
+import portal from './portal'
+import register from './register'
 
 const router = Router();
 
 // The user login router
-router.use('/', loginRouter);
+router.use('/', login);
 
 // The user portal router
-router.use('/', portalRouter);
+router.use('/', portal);
 
 // The user registration router
-router.use('/', registerRouter);
+router.use('/', register);
 
 export default router;

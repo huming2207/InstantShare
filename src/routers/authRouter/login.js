@@ -35,3 +35,5 @@ router.post('/login', [ check('email').isEmail(), check('password').isLength({ m
         });
     });
 });
+
+export default router;
