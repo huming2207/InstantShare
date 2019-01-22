@@ -13,13 +13,13 @@ router.get('/f/:id', (req, res) => {
 
     if(!id) return res.status(422).send('No ID parameter is specified');
 
-    GistFile.findOne({ id: id }, (err, file) => {
-        if(err) res.status(500).send('Internal server error');
-        if(!file) res.status(404).send('Cannot find your file!');
-        if(isDown) {
-            res.download(uploadDir + file._id, file.fileName);
+    GistFile.findById(id, (err, file) => {
+        if(err) return res.status(500).send('Internal server error');
+        if(!file) return res.status(404).send('Cannot find your file!');
+        if(!isDown) {
+            return res.download(uploadDir + file._id, file.fileName); // No need to set MIME type here, octet stream is fine
         } else {
-            res.sendFile(uploadDir + file._id);
+            return res.type(file.mimeType).sendFile(uploadDir + file._id);
         }
     });
 });

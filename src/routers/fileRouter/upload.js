@@ -15,8 +15,7 @@ router.post('/upload', (req, res) => {
     if (Object.keys(req.files).length == 0) {
         return res.status(400).json({ success: false, message: 'No file specified!', hash: null, id: null });
     }
-
-    console.log(req.files);
+    
     let uploadedFile = req.files.file;
     const fileHash = uploadedFile.md5();
     GistFile.create({
