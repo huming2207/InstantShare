@@ -31,8 +31,8 @@ router.post('/upload', (req, res) => {
 
         // When file document in the DB is created, go on moving the file to the storage space
         uploadedFile.mv(uploadDir + file._id, (err) => {
-            if (err) return res.status(500).json({ success: false, message: err, hash: null, len: -1 }); 
-            res.status(200).json({ success: true, message: 'File uploaded!', hash: fileHash, len: uploadedFile.data.length });
+            if (err) return res.status(500).json({ success: false, message: err, hash: null, id: null }); 
+            res.status(200).json({ success: true, message: 'File uploaded!', hash: fileHash, id: file._id });
         }); 
     });
 });

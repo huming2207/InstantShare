@@ -7,13 +7,15 @@ dotenv.config({ path: __dirname + '/../../../.env' });
 const router = Router();
 const uploadDir = process.env.UPLOAD_BASE_PATH + '/';
 
-router.get('/f/:hash', (req, res) => {
-    const hash = req.params.hash;
-    const isDown = (typeof(req.query.dl) !== undefined);
+router.get('/f/:id', (req, res) => {
+    const id = req.params.id;
+    const isDown = (Object.keys(req.query).length === 0);
 
-    if(!hash) return res.status(404).type('text/plain').send('Not found');
+    if(!id) return res.status(422).send('No ID parameter is specified');
 
-    GistFile.findOne({ hash: hash }, (err, file) => {
+    GistFile.findOne({ id: id }, (err, file) => {
+        if(err) res.status(500).send('Internal server error');
+        if(!file) res.status(404).send('Cannot find your file!');
         if(isDown) {
             res.download(uploadDir + file._id, file.fileName);
         } else {
