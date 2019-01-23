@@ -16,7 +16,12 @@ export function getUserToken(req) {
     if(!token || !token.length || token.length < 2) 
         return { passed: false, decodedUser: null, message: "Header format is incorrect!", statusCode: 422 };
 
-    const user = verifyUser(token[1]);
-    if(!user || !user.id) return { passed: false, decodedUser: null, message: "Failed to auth user!", statusCode: 401 };
-    return { passed: true, decodedUser: user, message: "User is valid", statusCode: 200 };
+    try {
+        const user = verifyUser(token[1]);
+        if(!user || !user.id) 
+            return { passed: false, decodedUser: null, message: "Failed to auth user!", statusCode: 401 };
+        return { passed: true, decodedUser: user, message: "User is valid", statusCode: 200 };
+    } catch(err) {
+        return { passed: false, decodedUser: null, message: "Failed with error: " + err, statusCode: 401 };
+    }
 }
