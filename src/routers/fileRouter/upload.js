@@ -17,6 +17,11 @@ router.post('/upload', (req, res) => {
     }
 
     let uploadedFile = req.files.file;
+
+    if(!uploadedFile) {
+        return res.status(400).json({ success: false, message: 'File is not selected!', hash: null, id: null });
+    }
+
     const fileHash = uploadedFile.md5();
     GistFile.create({
         owner: userResult.decodedUser._id,
