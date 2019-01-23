@@ -3,8 +3,9 @@ import bodyParser from 'body-parser'
 import db from './db'
 import router from './routers';
 import fileUpload from 'express-fileupload'
+import dotenv from 'dotenv'
 
-require('dotenv').config();
+dotenv.config();
 db();
 
 const app = express();
